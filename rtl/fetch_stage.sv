@@ -8,21 +8,20 @@ module fetch_stage (
     input  pipeline_status::backwards_t status_backwards_in,
     input  logic [31:0] jump_address_backwards_in
 );
-
     logic [31:0] pc;
-
-    // Next PC combinatorial logic
     logic [31:0] pc_next;
+
     always_comb begin
         if (status_backwards_in == pipeline_status::JUMP)
             pc_next = jump_address_backwards_in;
         else if (status_backwards_in == pipeline_status::STALL)
             pc_next = pc;
-        else
+        else if (wb.ack || wb.err)
             pc_next = pc + 32'd4;
+        else
+            pc_next = pc;
     end
 
-    // Wishbone - present current PC as address
     assign wb.cyc      = 1'b1;
     assign wb.stb      = 1'b1;
     assign wb.adr      = pc >> 2;
@@ -30,7 +29,6 @@ module fetch_stage (
     assign wb.sel      = 4'b1111;
     assign wb.dat_mosi = 32'b0;
 
-    // PC and output registers
     always_ff @(posedge clk) begin
         if (rst) begin
             pc                      <= constants::RESET_ADDRESS;
@@ -40,7 +38,6 @@ module fetch_stage (
         end
         else begin
             pc <= pc_next;
-
             if (status_backwards_in == pipeline_status::STALL) begin
                 instruction_reg_out     <= instruction_reg_out;
                 program_counter_reg_out <= program_counter_reg_out;
