@@ -1,13 +1,13 @@
 # Testcase Results 
 
 **Repository:** hades-v_11_Navadhikannan  
-**Test Run:** 14.04.2026 00:05  
-**Test Deadline:** 04.06.2026 00:00  
+**Test Run:** 30.04.2026 10:36  
+**Test Deadline:** 02.06.2026 00:00  
 ### Tested Commit Information
-**Date:** 13.04.2026 08:28  
-**Hash:** 3ca3a4a  
-**Message:** Fix register file: add reset initialization  
-**Committer Email:** navadhi2306k@gmail.com  
+**Date:** 30.04.2026 14:05  
+**Hash:** 0499d21  
+**Message:** Implement instruction decoding logic  
+**Committer Email:** noreply@github.com  
 
 # Module Under Test:  Fetch Stage  
 <details><summary>Details for the  Fetch Stage</summary>
@@ -243,5 +243,72 @@ Test input: SRAI with status_backwards_in = STALL and status_forwards_in = VALID
 **Points:**   4.00 /  4  
 
 
+</details>
+
+
+# Module Under Test:  Instruction Decoder  
+<details><summary>Details for the  Instruction Decoder</summary>
+
+**Points:**   3.73 /  4  
+
+## OPC_FENCE  
+  
+Test input: FENCE  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.immediate | 0x00000000 | 0x00000001 | 
+  
+Test input: FENCE  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.immediate | 0x00000000 | 0xffffffff | 
+  
+Test input: FENCE_I  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.immediate | 0x00000000 | 0xfffff800 | 
+  
+Test input: FENCE_I  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.immediate | 0x00000000 | 0xfffffabc | 
+  
+Test input: FENCE_I  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.immediate | 0x00000000 | 0xfffff876 | 
+## raise ILLEGAL_INSTRUCTION  
+### invalid CSR-address  
+  
+Test input: CSRRW  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 41 | 49 | 
+  
+Test input: CSRRS  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 42 | 49 | 
+  
+Test input: CSRRC  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 43 | 49 | 
+  
+Test input: CSRRW  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 41 | 49 | 
+### invalid CSR access  
+  
+Test input: CSRRS  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 42 | 49 | 
+  
+Test input: CSRRCI  
+| Signal | Is Value | Expected Value |   
+| - | - | - |  
+| instruction_out.op | 46 | 49 | 
 </details>
 
