@@ -1,12 +1,12 @@
 # Testcase Results 
 
 **Repository:** hades-v_11_Navadhikannan  
-**Test Run:** 14.05.2026 00:05  
-**Test Deadline:** 04.06.2026 00:00  
+**Test Run:** 14.05.2026 19:06  
+**Test Deadline:** 02.06.2026 00:00  
 ### Tested Commit Information
-**Date:** 13.05.2026 22:46  
-**Hash:** de113a9  
-**Message:** Updated execute stage  
+**Date:** 14.05.2026 22:40  
+**Hash:** b8bea03  
+**Message:** Implemented memory_stage  
 **Committer Email:** noreply@github.com  
 
 # Module Under Test:  Fetch Stage  
@@ -317,6 +317,15 @@ Test input: CSRRCI
 <details><summary>Details for the  Execute Stage</summary>
 
 **Points:**   4.65 / 10  
+
+
+</details>
+
+
+# Module Under Test:  Memory Stage  
+<details><summary>Details for the  Memory Stage</summary>
+
+**Points:**   3.10 / 10  
 
 
 </details>
