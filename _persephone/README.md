@@ -1,12 +1,12 @@
 # Testcase Results 
 
 **Repository:** hades-v_11_Navadhikannan  
-**Test Run:** 23.05.2026 19:36  
+**Test Run:** 23.05.2026 20:36  
 **Test Deadline:** 02.06.2026 00:00  
 ### Tested Commit Information
-**Date:** 23.05.2026 19:38  
-**Hash:** 471d8ef  
-**Message:** Merge https://github.com/Navadhikannan/Hades-V-project  
+**Date:** 23.05.2026 20:11  
+**Hash:** 5d8eb0a  
+**Message:** Implement writeback stage  
 **Committer Email:** navadhi2306k@gmail.com  
 
 # Module Under Test:  Fetch Stage  
@@ -334,28 +334,8 @@ Test input: CSRRCI
 # Module Under Test:  Writeback Stage  
 <details><summary>Details for the  Writeback Stage</summary>
 
-**Points:**   8.31 / 16  
+**Points:**   9.71 / 16  
 
-## SIMPLE INSTRUCTIONS  
-### FENCE_I  
-  
-Test input: FENCE_I with status_forwards_in = VALID and external/timer interrupt = 0/0  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| status_backwards_out | 0 | 2 | 
-| jump_address_backwards_out | 0x00000000 | 0x000400a8 | 
-  
-Test input: FENCE_I with status_forwards_in = VALID and external/timer interrupt = 0/0  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| status_backwards_out | 0 | 2 | 
-| jump_address_backwards_out | 0x00000000 | 0x000400ac | 
-  
-Test input: FENCE_I with status_forwards_in = VALID and external/timer interrupt = 0/0  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| status_backwards_out | 0 | 2 | 
-| jump_address_backwards_out | 0x00000000 | 0x000400b0 | 
 ## CSR-operations  
 ### MSTATUS - do only consider MPIE and MIE  
   
@@ -367,22 +347,17 @@ Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt 
 Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000008 | 
+| forwarding_out.data | 0x00000000 | 0x00000008 | 
   
 Test input: CSRRCI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x7777aaaa | 0x00000008 | 
+| forwarding_out.data | 0x00000088 | 0x00000008 | 
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000080 | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000088 | 
+| forwarding_out.data | 0x00000088 | 0x00000080 | 
 ### MTVEC - set LSBs = 0  
   
 Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
@@ -393,12 +368,12 @@ Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt 
 Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00000008 | 
+| forwarding_out.data | 0xaaaabbb8 | 0x00000008 | 
   
 Test input: CSRRCI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x0000001c | 
+| forwarding_out.data | 0xeeeefffc | 0x0000001c | 
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
@@ -408,18 +383,13 @@ Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xffffbbbb | 0xceaabacc | 
+| forwarding_out.data | 0xffffbbb8 | 0xceaabacc | 
 ### MIE - do only consider MEIE and MTIE  
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000800 | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000880 | 
+| forwarding_out.data | 0x00000880 | 0x00000800 | 
 ### MSCRATCH  
   
 Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSCRATCH  
@@ -461,22 +431,22 @@ Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt 
 Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000008 | 
+| forwarding_out.data | 0x11112220 | 0x00000008 | 
   
 Test input: CSRRCI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x7777aaaa | 0x0000001c | 
+| forwarding_out.data | 0x7777aaa8 | 0x0000001c | 
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0xccaaaacc | 
+| forwarding_out.data | 0xeeeefffc | 0xccaaaacc | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xffffffff | 0xceaabacc | 
+| forwarding_out.data | 0xfffffffc | 0xceaabacc | 
 ### MCAUSE  
   
 Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
@@ -508,7 +478,7 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x88887777 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
@@ -523,7 +493,7 @@ Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x88887777 | 0x4ea8b84c | 
+| forwarding_out.data | 0x88887774 | 0x4ea8b84c | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
 | Signal | Is Value | Expected Value |   
@@ -540,7 +510,7 @@ Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
@@ -550,7 +520,7 @@ Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MTVEC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0xdabbad00 | 
+| forwarding_out.data | 0xaaaabbb8 | 0xdabbad00 | 
 ### immediate = 0  
   
 Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSCRATCH  
@@ -571,7 +541,7 @@ Test input: CSRRSI with status_forwards_in = VALID and external/timer interrupt 
 Test input: CSRRWI with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0xfaceb00c | 
+| forwarding_out.data | 0xaaaabbb8 | 0xfaceb00c | 
 ### source register != x0, but source data = 0  
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSCRATCH  
@@ -587,18 +557,18 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0xfaceb00c | 
+| forwarding_out.data | 0xeeeefffc | 0xfaceb00c | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0xfaceb00c | 
+| forwarding_out.data | 0xeeeefffc | 0xfaceb00c | 
 ### Check result of modified CSR-registers  
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x00002222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSCRATCH  
 | Signal | Is Value | Expected Value |   
@@ -610,53 +580,31 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: ECALL with status_forwards_in = ECALL and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x00000000 | 0x00040010 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x0000000b | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### status_forwards_in = EBREAK  
   
 Test input: EBREAK with status_forwards_in = EBREAK and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
   
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040020 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000003 | 
-  
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### check CSRs  
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040020 | 
+| forwarding_out.data | 0xaaaebbb8 | 0x00040020 | 
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
 | Signal | Is Value | Expected Value |   
@@ -666,180 +614,80 @@ Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000088 | 
+| forwarding_out.data | 0x00000000 | 0x00000088 | 
 ### status_forwards_in = FETCH_FAULT  
   
 Test input: CSRRW with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0, csr = MCAUSE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040040 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000001 | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### status_forwards_in = LOAD_FAULT  
   
 Test input: LB with status_forwards_in = LOAD_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040050 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000005 | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### status_forwards_in = STORE_MISALIGNED  
   
 Test input: SH with status_forwards_in = STORE_MISALIGNED and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040060 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000006 | 
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ## raise Exception (Interrupts disabled)  
 ### status_forwards_in = ECALL  
   
 Test input: ECALL with status_forwards_in = ECALL and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040078 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x0000000b | 
 ### status_forwards_in = EBREAK  
   
 Test input: EBREAK with status_forwards_in = EBREAK and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xbbbbbbbb | 0x00040088 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000003 | 
 ### status_forwards_in = FETCH_MISALIGNED  
   
 Test input: BEQ with status_forwards_in = FETCH_MISALIGNED and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xbbbbbbbb | 0x00040098 | 
 ### status_forwards_in = ILLEGAL_INSTRUCTION  
   
 Test input: XORI with status_forwards_in = ILLEGAL_INSTRUCTION and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xbbbbbbbb | 0x000400a8 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000002 | 
 ### status_forwards_in = LOAD_MISALIGNED  
   
 Test input: LHU with status_forwards_in = LOAD_MISALIGNED and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xbbbbbbbb | 0x000400b8 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000004 | 
 ### status_forwards_in = STORE_FAULT  
   
 Test input: SB with status_forwards_in = STORE_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check CSRs  
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xbbbbbbbb | 0x000400c8 | 
-  
-Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000007 | 
 ## trigger Interrupt (already enabled)  
 ### now interrupt should be triggered  
   
@@ -863,18 +711,18 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11110000 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000800 | 
+| forwarding_out.data | 0x00000880 | 0x00000800 | 
 ### check CSRs  
   
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
@@ -885,18 +733,18 @@ Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x555577b3 | 0x00000088 | 
+| forwarding_out.data | 0x00000080 | 0x00000088 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x44445591 | 0x00000088 | 
+| forwarding_out.data | 0x00000080 | 0x00000088 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x77778888 | 0x00000080 | 
+| forwarding_out.data | 0x00000880 | 0x00000080 | 
 ### now interrupt should be triggered  
   
 Test input: ADDI with status_forwards_in = VALID and external/timer interrupt = 1/1  
@@ -909,7 +757,7 @@ Test input: ADDI with status_forwards_in = VALID and external/timer interrupt = 
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MEPC  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbb | 0x00040064 | 
+| forwarding_out.data | 0xaaaabbb8 | 0x00040064 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCAUSE  
 | Signal | Is Value | Expected Value |   
@@ -919,18 +767,13 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11110000 | 0x00000080 | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000880 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ## trigger Interrupt immediatly (enable when already pending)  
 ### MSTATUS[MIE] = 1  
   
@@ -955,18 +798,18 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11110000 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000800 | 
+| forwarding_out.data | 0x00000880 | 0x00000800 | 
 ### MSTATUS[MIE] = 1  
   
 Test input: CSRRS with status_forwards_in = VALID and external/timer interrupt = 0/1, csr = MSTATUS  
@@ -995,7 +838,7 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
@@ -1006,7 +849,7 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xffffffff | 0x00000080 | 
+| forwarding_out.data | 0x00000880 | 0x00000080 | 
 ## simple MRET  
 ### check MSTATUS (MPIE == 1 && MIE == 0)  
   
@@ -1025,33 +868,20 @@ Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x00000100 | 0x00000088 | 
+| forwarding_out.data | 0x00000080 | 0x00000088 | 
 ## MRET after Exception with MSTATUS[MIE] = 0  
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x00000100 | 0x00000088 | 
+| forwarding_out.data | 0x00000000 | 0x00000088 | 
 ### raise Exception  
   
 Test input: XOR with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### MRET  
-  
-Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 0/0  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| jump_address_backwards_out | 0x00000000 | 0x00040018 | 
-### check MSTATUS (MIE == 0)  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x00000100 | 0x00000080 | 
 ## MRET after Interrupt with MSTATUS[MIE] = 1  
 ### now interrupt should be triggered  
   
@@ -1065,19 +895,13 @@ Test input: ADDI with status_forwards_in = VALID and external/timer interrupt = 
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x77778888 | 0x00000080 | 
+| forwarding_out.data | 0x00000088 | 0x00000080 | 
 ### MRET  
   
 Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| jump_address_backwards_out | 0x00000000 | 0x00040038 | 
-### check MSTATUS (MIE == 1)  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xcccd1188 | 0x00000088 | 
+| jump_address_backwards_out | 0x00040018 | 0x00040038 | 
 ## MRET while Interrupt pending  
 ### now interrupt should be triggered  
   
@@ -1086,24 +910,12 @@ Test input: ADDI with status_forwards_in = VALID and external/timer interrupt = 
 | - | - | - |  
 | status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
-### check MSTATUS (MPIE == 1 && MIE == 0)  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x555577b3 | 0x00000080 | 
 ### MRET -> directly trigger Interrupt again  
   
 Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 1/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
 | jump_address_backwards_out | 0x00040054 | 0xdabbad00 | 
-### check MSTATUS (MIE == 0)  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x0000ef33 | 0x00000080 | 
 ### check MEPC (no change)  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MEPC  
@@ -1116,45 +928,34 @@ Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
 | jump_address_backwards_out | 0x00000054 | 0x0004005c | 
-### check MSTATUS (MIE == 1)  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x00019b11 | 0x00000088 | 
 ## status_forwards_in != VALID  
 ### FENCE_I with status_forwards_in != VALID  
   
 Test input: FENCE_I with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### MRET with status_forwards_in != VALID  
   
 Test input: MRET with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### CSR-operations with status_forwards_in != VALID  
   
 Test input: CSRRS with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0, csr = MIE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
   
 Test input: CSRRWI with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0, csr = MTVAL  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
   
 Test input: CSRRCI with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0, csr = MHPMCOUNTER9H  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
   
@@ -1173,42 +974,25 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: FENCE_I with status_forwards_in = VALID and external/timer interrupt = 1/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
-| jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
+| jump_address_backwards_out | 0x00040014 | 0xdabbad00 | 
 ### disable interrupts  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0x00000080 | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MIE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0xeeeeffff | 0x00000880 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### status_forwards_in = Exception => Exception higher priority than Interrupt  
   
 Test input: SLTIU with status_forwards_in = FETCH_FAULT and external/timer interrupt = 1/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check CSRs  
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MEPC  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x0004000c | 0x00040018 | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MCAUSE  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x8000000b | 0x00000001 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MSTATUS  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x555577b3 | 0x00000080 | 
+| forwarding_out.data | 0x00000000 | 0x00000080 | 
 ### MRET from Exception while Interrupt pending  
   
 Test input: MRET with status_forwards_in = VALID and external/timer interrupt = 1/0  
@@ -1225,26 +1009,20 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MCAUSE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x80000009 | 0x8000000b | 
-  
-Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 1/0, csr = MSTATUS  
-| Signal | Is Value | Expected Value |   
-| - | - | - |  
-| forwarding_out.data | 0x0000ef33 | 0x00000080 | 
+| forwarding_out.data | 0x00000001 | 0x8000000b | 
 ## check MCYCLE and MINSTRET  
 ### status_forwards_in = Exception  
   
 Test input: ADDI with status_forwards_in = FETCH_FAULT and external/timer interrupt = 0/0  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| status_backwards_out | 0 | 2 | 
 | jump_address_backwards_out | 0x00000000 | 0xdabbad00 | 
 ### check MCYCLE  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCYCLE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xeeef0005 | 0x76543216 | 
+| forwarding_out.data | 0xeeef0006 | 0x76543216 | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCYCLEH  
 | Signal | Is Value | Expected Value |   
@@ -1267,13 +1045,13 @@ Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt =
 Test input: CSRRW with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCYCLE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0xaaaabbbc | 0xffffffff | 
+| forwarding_out.data | 0xaaaabbbd | 0xffffffff | 
 ### check MCYCLE  
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCYCLE  
 | Signal | Is Value | Expected Value |   
 | - | - | - |  
-| forwarding_out.data | 0x11112222 | 0xbaaaaaad | 
+| forwarding_out.data | 0x11112223 | 0xbaaaaaad | 
   
 Test input: CSRRC with status_forwards_in = VALID and external/timer interrupt = 0/0, csr = MCYCLEH  
 | Signal | Is Value | Expected Value |   
