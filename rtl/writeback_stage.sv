@@ -19,6 +19,7 @@ module writeback_stage (
     output pipeline_status::backwards_t status_backwards_out,
     output logic [31:0] jump_address_backwards_out
 );
+    // CSR registers stored unmasked
     logic [31:0] mstatus;
     logic [31:0] mtvec;
     logic [31:0] mepc;
@@ -77,7 +78,7 @@ module writeback_stage (
         endcase
     end
 
-    // Exception has higher priority than interrupt
+    // Exception higher priority than interrupt
     assign is_trap = is_exception || (!is_exception && is_interrupt);
 
     // Trap vector
@@ -88,52 +89,29 @@ module writeback_stage (
             trap_pc = {mtvec[31:2], 2'b00};
     end
 
-    // MRET: check if interrupt pending after restoring MIE from MPIE
-    logic mret_int_pending;
-    assign mret_int_pending = is_mret && (
-        (timer_interrupt_in    && mie[7]  && mstatus[7]) ||
-        (external_interrupt_in && mie[11] && mstatus[7]));
+    // MRET interrupt check - uses MPIE as new MIE
+    logic mret_timer, mret_external, mret_int_pending;
+    assign mret_timer    = timer_interrupt_in    && mie[7]  && mstatus[7];
+    assign mret_external = external_interrupt_in && mie[11] && mstatus[7];
+    assign mret_int_pending = is_mret && (mret_timer || mret_external);
 
-    // Backwards status
+    logic [31:0] mret_trap_pc;
     always_comb begin
-        if (is_trap) begin
-            status_backwards_out       = pipeline_status::JUMP;
-            jump_address_backwards_out = trap_pc;
-        end
-        else if (mret_int_pending) begin
-            // Interrupt triggers immediately after MRET
-            logic [31:0] mret_trap_pc;
-            if (mtvec[1:0] == 2'b01)
-                mret_trap_pc = {mtvec[31:2], 2'b00} +
-                    ((timer_interrupt_in && mie[7] && mstatus[7]) ? 32'd28 : 32'd44);
-            else
-                mret_trap_pc = {mtvec[31:2], 2'b00};
-            status_backwards_out       = pipeline_status::JUMP;
-            jump_address_backwards_out = mret_trap_pc;
-        end
-        else if (is_mret) begin
-            status_backwards_out       = pipeline_status::JUMP;
-            jump_address_backwards_out = mepc;
-        end
-        else if (is_fence_i) begin
-            status_backwards_out       = pipeline_status::JUMP;
-            jump_address_backwards_out = next_program_counter_in;
-        end
-        else begin
-            status_backwards_out       = pipeline_status::READY;
-            jump_address_backwards_out = 32'b0;
-        end
+        if (mtvec[1:0] == 2'b01)
+            mret_trap_pc = {mtvec[31:2], 2'b00} + (mret_timer ? 32'd28 : 32'd44);
+        else
+            mret_trap_pc = {mtvec[31:2], 2'b00};
     end
 
-    // CSR read data
+    // CSR read data - apply masking on read
     logic [31:0] csr_read_data;
     always_comb begin
         case (instruction_in.csr)
             csr::MSTATUS:   csr_read_data = mstatus & 32'h88;
-            csr::MTVEC:     csr_read_data = mtvec;
-            csr::MEPC:      csr_read_data = mepc;
+            csr::MTVEC:     csr_read_data = {mtvec[31:2], 2'b00};
+            csr::MEPC:      csr_read_data = {mepc[31:2], 2'b00};
             csr::MCAUSE:    csr_read_data = mcause;
-            csr::MIP:       csr_read_data = mip;
+            csr::MIP:       csr_read_data = mip & 32'h880;
             csr::MIE:       csr_read_data = mie & 32'h880;
             csr::MSCRATCH:  csr_read_data = mscratch;
             csr::MCYCLE:    csr_read_data = mcycle[31:0];
@@ -155,7 +133,7 @@ module writeback_stage (
         endcase
     end
 
-    // Only write CSR if source is non-zero (CSRRS/CSRRC with rs1=x0 don't write)
+    // Only write if source nonzero for CSRRS/CSRRC
     logic csr_do_write;
     always_comb begin
         case (instruction_in.op)
@@ -164,6 +142,46 @@ module writeback_stage (
             op::CSRRC, op::CSRRCI: csr_do_write = is_csr_op && (rd_data_in != 32'b0);
             default:                csr_do_write = 1'b0;
         endcase
+    end
+
+    // Check if CSR write to MIE/MSTATUS triggers interrupt immediately
+    logic csr_write_mie, csr_write_mstatus;
+    assign csr_write_mie     = csr_do_write && (instruction_in.csr == csr::MIE);
+    assign csr_write_mstatus = csr_do_write && (instruction_in.csr == csr::MSTATUS);
+
+    logic csr_triggers_interrupt;
+
+    always_comb begin
+        if (csr_write_mie)
+            csr_triggers_interrupt = mstatus_mie && (
+                (timer_interrupt_in    && csr_write_data[7]) ||
+                (external_interrupt_in && csr_write_data[11]));
+        else if (csr_write_mstatus)
+            csr_triggers_interrupt = csr_write_data[3] && (
+                (timer_interrupt_in    && mie[7]) ||
+                (external_interrupt_in && mie[11]));
+        else
+            csr_triggers_interrupt = 1'b0;
+    end
+
+
+    // New MIE for interrupt-on-CSR-write trap check
+    logic [31:0] new_mie_for_trap;
+    assign new_mie_for_trap = csr_write_mie ? csr_write_data : mie;
+    logic new_mstatus_mie;
+    assign new_mstatus_mie = csr_write_mstatus ? csr_write_data[3] : mstatus_mie;
+
+    logic new_timer_pending, new_external_pending;
+    assign new_timer_pending    = timer_interrupt_in    && new_mie_for_trap[7]  && new_mstatus_mie;
+    assign new_external_pending = external_interrupt_in && new_mie_for_trap[11] && new_mstatus_mie;
+
+    logic [31:0] csr_trap_pc;
+    always_comb begin
+        if (mtvec[1:0] == 2'b01)
+            csr_trap_pc = {mtvec[31:2], 2'b00} +
+                (new_timer_pending ? 32'd28 : 32'd44);
+        else
+            csr_trap_pc = {mtvec[31:2], 2'b00};
     end
 
     // Forwarding
@@ -182,6 +200,34 @@ module writeback_stage (
         forwarding_out.address    = instruction_in.rd_address;
     end
 
+    // Backwards status
+    always_comb begin
+        if (is_trap) begin
+            status_backwards_out       = pipeline_status::JUMP;
+            jump_address_backwards_out = trap_pc;
+        end
+        else if (csr_triggers_interrupt) begin
+            status_backwards_out       = pipeline_status::JUMP;
+            jump_address_backwards_out = csr_trap_pc;
+        end
+        else if (mret_int_pending) begin
+            status_backwards_out       = pipeline_status::JUMP;
+            jump_address_backwards_out = mret_trap_pc;
+        end
+        else if (is_mret) begin
+            status_backwards_out       = pipeline_status::JUMP;
+            jump_address_backwards_out = {mepc[31:2], 2'b00};
+        end
+        else if (is_fence_i) begin
+            status_backwards_out       = pipeline_status::JUMP;
+            jump_address_backwards_out = next_program_counter_in;
+        end
+        else begin
+            status_backwards_out       = pipeline_status::READY;
+            jump_address_backwards_out = 32'b0;
+        end
+    end
+
     // Sequential logic
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -196,7 +242,7 @@ module writeback_stage (
             minstret <= 64'b0;
         end
         else begin
-            // Cycle counter always increments
+            // Cycle always increments
             mcycle <= mcycle + 64'b1;
 
             // Update MIP
@@ -204,30 +250,42 @@ module writeback_stage (
             mip[11] <= external_interrupt_in;
 
             if (is_trap) begin
-                mepc    <= program_counter_in & ~32'b1;
+                mepc    <= program_counter_in;
                 mcause  <= is_exception ?
                     mcause_val :
                     (timer_pending ? 32'h80000007 : 32'h8000000B);
-                // Save MIE to MPIE, clear MIE
-                mstatus <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
+                // MPIE = MIE, MIE = 0
+                mstatus[7] <= mstatus[3];
+                mstatus[3] <= 1'b0;
+            end
+            else if (csr_triggers_interrupt) begin
+                // CSR write triggers interrupt - save PC, update cause
+                mepc    <= program_counter_in;
+                mcause  <= new_timer_pending ? 32'h80000007 : 32'h8000000B;
+                mstatus[7] <= new_mstatus_mie;
+                mstatus[3] <= 1'b0;
+                // Still apply the CSR write for MIE/MSTATUS
+                if (csr_write_mie)      mie     <= csr_write_data;
+                if (csr_write_mstatus)  mstatus <= {mstatus[31:4], 1'b0, mstatus[2:0]};
             end
             else if (mret_int_pending) begin
-                // Re-trigger interrupt: MEPC stays, update cause, keep MIE=0
-                mcause  <= (timer_interrupt_in && mie[7] && mstatus[7]) ?
-                           32'h80000007 : 32'h8000000B;
-                mstatus <= {mstatus[31:8], mstatus[7], mstatus[6:4], 1'b0, mstatus[2:0]};
+                // MRET but interrupt fires: save new MEPC (old mepc), update cause
+                mcause     <= mret_timer ? 32'h80000007 : 32'h8000000B;
+                mstatus[7] <= mstatus[7];
+                mstatus[3] <= 1'b0;
             end
             else if (is_mret) begin
                 // Restore MIE from MPIE, set MPIE=1
-                mstatus <= {mstatus[31:8], 1'b1, mstatus[6:4], mstatus[7], mstatus[2:0]};
+                mstatus[3] <= mstatus[7];
+                mstatus[7] <= 1'b1;
             end
             else if (csr_do_write) begin
                 case (instruction_in.csr)
-                    csr::MSTATUS:  mstatus  <= csr_write_data & 32'h88;
-                    csr::MTVEC:    mtvec    <= {csr_write_data[31:2], 2'b00};
-                    csr::MEPC:     mepc     <= {csr_write_data[31:2], 2'b00};
+                    csr::MSTATUS:  begin mstatus[3] <= csr_write_data[3]; mstatus[7] <= csr_write_data[7]; end
+                    csr::MTVEC:    mtvec    <= csr_write_data;
+                    csr::MEPC:     mepc     <= csr_write_data;
                     csr::MCAUSE:   mcause   <= csr_write_data;
-                    csr::MIE:      mie      <= csr_write_data & 32'h880;
+                    csr::MIE:      mie      <= csr_write_data;
                     csr::MSCRATCH: mscratch <= csr_write_data;
                     csr::MCYCLE:   mcycle   <= {mcycle[63:32], csr_write_data} + 64'b1;
                     csr::MCYCLEH:  mcycle   <= {csr_write_data, mcycle[31:0]} + 64'b1;
@@ -237,8 +295,8 @@ module writeback_stage (
                 endcase
             end
 
-            // Instruction retired counter
-            if (is_valid && !is_trap)
+            // Instruction retired
+            if (is_valid && !is_trap && !csr_triggers_interrupt)
                 minstret <= minstret + 64'b1;
         end
     end

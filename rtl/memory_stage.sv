@@ -84,11 +84,38 @@ module memory_stage (
     assign wb.stb      = mem_active && !misaligned;
     assign wb.adr      = mem_addr;
     assign wb.we       = is_store;
-    assign wb.dat_mosi = source_data_in;
+    logic [31:0] latched_addr;
+    logic [31:0] latched_data;
+    logic        latched_we;
+    logic        mem_pending;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            latched_addr <= 32'b0;
+            latched_data <= 32'b0;
+            latched_we   <= 1'b0;
+            mem_pending  <= 1'b0;
+        end
+        else if (mem_active && !misaligned && !mem_pending && !wb.ack && !wb.err) begin
+            latched_addr <= mem_addr;
+            latched_data <= source_data_in;
+            latched_we   <= is_store;
+            mem_pending  <= 1'b1;
+        end
+        else if (wb.ack || wb.err) begin
+            mem_pending  <= 1'b0;
+        end
+    end
+
+    assign wb.cyc      = (mem_active && !misaligned) || mem_pending;
+    assign wb.stb      = (mem_active && !misaligned) || mem_pending;
+    assign wb.adr      = mem_pending ? latched_addr : mem_addr;
+    assign wb.we       = mem_pending ? latched_we   : is_store;
+    assign wb.dat_mosi = mem_pending ? latched_data : source_data_in;
 
     // Stall while waiting for memory
     logic mem_stall;
-    assign mem_stall = mem_active && !misaligned && !wb.ack && !wb.err;
+    assign mem_stall = ((mem_active && !misaligned) || mem_pending) && !wb.ack && !wb.err;
 
     // Backwards status
     always_comb begin
