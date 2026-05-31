@@ -79,7 +79,7 @@ module writeback_stage (
     end
 
     // Exception higher priority than interrupt
-    assign is_trap = is_exception || (!is_exception && is_interrupt);
+    assign is_trap = (is_exception && (status_forwards_in != pipeline_status::BUBBLE)) || (!is_exception && is_interrupt && is_valid);
 
     // Trap vector
     always_comb begin
