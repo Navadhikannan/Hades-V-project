@@ -1,12 +1,12 @@
 # Testcase Results 
 
 **Repository:** hades-v_11_Navadhikannan  
-**Test Run:** 31.05.2026 06:36  
+**Test Run:** 31.05.2026 07:06  
 **Test Deadline:** 02.06.2026 00:00  
 ### Tested Commit Information
-**Date:** 31.05.2026 06:23  
-**Hash:** 17dfe13  
-**Message:** Fix memory stage latching  
+**Date:** 31.05.2026 06:59  
+**Hash:** 8d0772c  
+**Message:** Restore all stage implementations for submission  
 **Committer Email:** navadhi2306k@gmail.com  
 
 # Module Under Test:  Fetch Stage  
