@@ -200,6 +200,15 @@ module memory_stage (
             forwarding_out               <= forwarding_out;
             status_forwards_out          <= status_forwards_out;
         end
+        else if (mem_stall && wb.ack) begin
+            source_data_reg_out          <= source_data_in;
+            instruction_reg_out          <= instruction_in;
+            program_counter_reg_out      <= program_counter_in;
+            next_program_counter_reg_out <= next_program_counter_in;
+            rd_data_reg_out              <= read_data;
+            forwarding_out               <= '{data_valid: fwd_valid, data: read_data, address: instruction_in.rd_address};
+            status_forwards_out          <= status_forwards_in;
+        end
         else if (mem_stall) begin
             source_data_reg_out          <= source_data_reg_out;
             rd_data_reg_out              <= rd_data_reg_out;
