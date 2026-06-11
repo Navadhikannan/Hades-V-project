@@ -240,12 +240,22 @@ module instruction_decoder (
                 instruction_out.rs1_address = 5'b0;
                 instruction_out.rs2_address = 5'b0;
                 instruction_out.immediate   = {27'b0, instruction_in[19:15]};
+                case (instruction_in[31:20])
+                    12'h300, 12'h304, 12'h305, 12'h340, 12'h341,
+                    12'h342, 12'h344, 12'hB00, 12'hB02, 12'hB80, 12'hB82: ;
+                    default: instruction_out.op = op::ILLEGAL;
+                endcase
             end
             32'b????????????_?????_111_?????_1110011: begin
                 instruction_out.op          = op::CSRRCI;
                 instruction_out.rs1_address = 5'b0;
                 instruction_out.rs2_address = 5'b0;
                 instruction_out.immediate   = {27'b0, instruction_in[19:15]};
+                case (instruction_in[31:20])
+                    12'h300, 12'h304, 12'h305, 12'h340, 12'h341,
+                    12'h342, 12'h344, 12'hB00, 12'hB02, 12'hB80, 12'hB82: ;
+                    default: instruction_out.op = op::ILLEGAL;
+                endcase
             end
             default: begin
                 instruction_out.op          = op::ILLEGAL;
