@@ -167,9 +167,11 @@ module instruction_decoder (
             32'b0000000_?????_?????_111_?????_0110011: instruction_out.op = op::AND;
             32'b????????????_?????_000_?????_0001111: begin
                 instruction_out.op = op::FENCE;
+                instruction_out.immediate = {{20{instruction_in[31]}}, instruction_in[31:20]};
             end
             32'b????????????_?????_001_?????_0001111: begin
                 instruction_out.op = op::FENCE_I;
+                instruction_out.immediate = {{20{instruction_in[31]}}, instruction_in[31:20]};
             end
             32'b000000000000_00000_000_00000_1110011: begin
                 instruction_out.op          = op::ECALL;
